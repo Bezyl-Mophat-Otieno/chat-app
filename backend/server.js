@@ -15,6 +15,10 @@ const server = app.listen(PORT, () => {
 const io = new Server(server, options);
 
 io.on("connection", (socket) => {
+  // on connect set the username
+  socket.on("setUsername", (username) => {
+    socket.emit("new User", username);
+  });
   // on connect send the welcome message
   socket.emit("welcome", {
     message: "Welcome to the chat",
@@ -28,5 +32,10 @@ io.on("connection", (socket) => {
       message,
       userId: socket.id,
     });
+  });
+
+  // Listen to client Typing
+  socket.on("typing", (username) => {
+    socket.to("chat").emit("typing", username);
   });
 });
